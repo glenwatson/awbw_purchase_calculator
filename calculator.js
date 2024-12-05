@@ -1,9 +1,3 @@
-let cost_modifier = 1;
-let funds_available = 10500;
-let num_factories = 10;
-let num_airports = 0;
-let num_ports = 5;
-
 const factory_unit_costs = {
     'Infantry': 1000,
     'Mech': 3000,
@@ -35,11 +29,12 @@ const port_unit_costs = {
     'Battleship': 28000,
     'Carrier': 30000,
 };
+/** Object{[funds_available, num_factories, num_airports, num_ports]: Array<units>} */
+let base_case_records;
+
 let compareFn = function(unitX, unitY) {
     return unitX.localeCompare(unitY); // TODO - allow sorting by value, unit type, etc.
 };
-/** Object{[funds_available, num_factories, num_airports, num_ports]: Array<units>} */
-const base_case_records = {};
 
 function get_possible_purchases(unit_cost_lookup, funds) {
     return Object.entries(unit_cost_lookup)
@@ -47,7 +42,12 @@ function get_possible_purchases(unit_cost_lookup, funds) {
         .map(entry => entry[0]);
 }
 
-function goanddoit([funds_available, num_factories, num_airports, num_ports, units]) {
+function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports) {
+    base_case_records = {};
+    calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, []);
+    return Object.values(base_case_records);
+}
+function calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, units) {
     if ([funds_available, num_factories, num_airports, num_ports] in base_case_records &&
         base_case_records[[funds_available, num_factories, num_airports, num_ports]].equals(units.sort(compareFn))
     ) {
@@ -64,6 +64,7 @@ function goanddoit([funds_available, num_factories, num_airports, num_ports, uni
     const possible_port_purchases = get_possible_purchases(port_unit_costs, funds_available);
     if (possible_factory_purchases.length == 0 && possible_airport_purchases.length == 0 && possible_port_purchases.length == 0) {
         // base case - can't afford anything from and production tiles
+        if (units == undefined) debugger;
         base_case_records[[funds_available, num_factories, num_airports, num_ports]] = units.sort(compareFn);
         return;
     }
@@ -72,33 +73,39 @@ function goanddoit([funds_available, num_factories, num_airports, num_ports, uni
         for (const factory_purchase_name of possible_factory_purchases) {
             const new_units = units.slice();
             new_units.push(factory_purchase_name);
-            goanddoit([funds_available - factory_unit_costs[factory_purchase_name] * cost_modifier, 
+            calculatePurchaseOptions(
+                cost_modifier,
+                funds_available - factory_unit_costs[factory_purchase_name] * cost_modifier, 
                 num_factories - 1,
                 num_airports, 
                 num_ports, 
-                new_units]);
+                new_units);
         }
     }
     if (num_airports > 0) {
         for (const airport_purchase_name of possible_airport_purchases) {
             const new_units = units.slice();
             new_units.push(airport_purchase_name);
-            goanddoit([funds_available - airport_unit_costs[airport_purchase_name] * cost_modifier, 
+            calculatePurchaseOptions(
+                cost_modifier,
+                funds_available - airport_unit_costs[airport_purchase_name] * cost_modifier, 
                 num_factories,
                 num_airports - 1, 
                 num_ports, 
-                new_units]);
+                new_units);
         }
     }
     if (num_ports > 0) {
         for (const port_purchase_name of possible_port_purchases) {
             const new_units = units.slice();
             new_units.push(port_purchase_name);
-            goanddoit([funds_available - port_unit_costs[port_purchase_name] * cost_modifier, 
+            calculatePurchaseOptions(
+                cost_modifier,
+                funds_available - port_unit_costs[port_purchase_name] * cost_modifier, 
                 num_factories,
                 num_airports, 
                 num_ports - 1, 
-                new_units]);
+                new_units);
         }
     }
 }
@@ -138,5 +145,9 @@ Array.prototype.equals = function (array) {
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 
 
-goanddoit([funds_available, num_factories, num_airports, num_ports, []]);
-console.log('result', base_case_records);
+let cost_modifier = 1;
+let funds_available = 18000;
+let num_factories = 3;
+let num_airports = 1;
+let num_ports = 1;
+console.log('result', getPurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports));
