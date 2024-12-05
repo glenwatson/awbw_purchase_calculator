@@ -30,10 +30,22 @@
         <div>
             <button id="calculate">Calculate prrchase options</button>
         </div>
-        <div id="results">
+        <div>
+            <!--
+            <div id="sorts">
+                <button id="sort_funds">Sort by funds left over</button>
+                <button id="sort_unit_price">Sort by most expensive unit</button>
+            </div>
+            -->
             <ul>
+                <li>Funds left over - Purchase list</li>
+            </ul>
+            <ul id="results">
 
             </ul>
+        </div>
+        <div>
+            Tip: Want to base skip? Reduce the # of bases by 1!
         </div>
         <script>
             document.querySelector("#calculate").onclick = () => {
@@ -43,17 +55,17 @@
                 const numPorts = parseInt(document.querySelector("#ports").value);
                 const costModifier = parseFloat(document.querySelector("#cost_modifier").value);
                 const purchaseOptions = getPurchaseOptions(costModifier, funds, numFactories, numAirports, numPorts);
-                const resultsEle = document.querySelector("#results > ul");
+                const resultsEle = document.querySelector("#results");
                 resultsEle.innerHTML = "";
                 for (const option of purchaseOptions) {
                     const funds_left = option[0];
-                    const purchases = option[1].join(", ");
+                    const purchases = option[1].map(o => o.unit).join(", ");
                     const liEle = document.createElement('li');
                     liEle.innerText = funds_left + " - " + purchases;
                     resultsEle.appendChild(liEle);
                 }
             };
         </script>
-        <script src="calculator.js" />
+        <script src="calculator.js"></script>
     </body>
 </html>

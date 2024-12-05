@@ -46,21 +46,29 @@ function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_a
     base_case_records = {};
     calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, []);
     // Format these janky results
+    const all_units = {...factory_unit_costs, ...airport_unit_costs, ...port_unit_costs};
     return Object.entries(base_case_records)
         .map((e) => {
-            return [parseInt(e[0].split(',')[0]), e[1]];
+            return [
+                parseInt(e[0].split(',')[0]),
+                e[1].map(unit_name => {
+                    return {
+                        'unit': unit_name,
+                        'cost': all_units[unit_name]
+                    }
+                })
+            ];
         }
     );
 }
 /**
- * 
+ * Does the calculations and dumps the results into `base_case_records` as {string: Array<string>} {[<funds_left, factories_left, airports_left, ports_left] : [unit_name, ...]}
  * @param {float} cost_modifier 
  * @param {int} funds_available 
  * @param {int} num_factories 
  * @param {int} num_airports 
  * @param {int} num_ports 
- * @param {Array<string>} units 
- * @returns {string: Array<string>}
+ * @param {Array<string>} units
  */
 function calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, units) {
     if ([funds_available, num_factories, num_airports, num_ports] in base_case_records &&
