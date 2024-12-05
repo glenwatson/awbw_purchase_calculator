@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+    <head>
+        <style>
+            .inputOption {
+
+            }
+        </style>
+    </head>
+        <body>
+        <div class="inputOption">
+            <label for="funds">Amount of funds available: </label>
+            <input type="number" name="funds" id="funds" value="1000" step="1000" min="0" max="1000000" />
+        </div>
+        <div class="inputOption">
+            <label for="num_factories">Number of factories available: </label>
+            <input type="number" name="factories" id="factories" value="2" min="0" max="100"  />
+        </div>
+        <div class="inputOption">
+            <label for="num_airports">Number of airports available: </label>
+            <input type="number" name="airports" id="airports" value="1" min="0" max="100"  />
+        </div>
+        <div class="inputOption">
+            <label for="num_ports">Number of ports available: </label>
+            <input type="number" name="ports" id="ports" value="1" min="0" max="100" />
+        </div>
+        <div class="inputOption">
+            <label for="cost_modifier">Cost modifer: </label>
+            <input type="number" name="cost_modifier" id="cost_modifier" value="1.0" step="0.05" min="0" max="2" />
+        </div>
+        <div>
+            <button id="calculate">Calculate prrchase options</button>
+        </div>
+        <div id="results">
+            <ul>
+
+            </ul>
+        </div>
+        <script>
+            document.querySelector("#calculate").onclick = () => {
+                const funds = parseInt(document.querySelector("#funds").value);
+                const numFactories = parseInt(document.querySelector("#factories").value);
+                const numAirports = parseInt(document.querySelector("#airports").value);
+                const numPorts = parseInt(document.querySelector("#ports").value);
+                const costModifier = parseFloat(document.querySelector("#cost_modifier").value);
+                const purchaseOptions = getPurchaseOptions(costModifier, funds, numFactories, numAirports, numPorts);
+                const resultsEle = document.querySelector("#results > ul");
+                resultsEle.innerHTML = "";
+                for (const option of purchaseOptions) {
+                    const purchases = option.join(", ");
+                    const liEle = document.createElement('li');
+                    liEle.innerText = purchases;
+                    resultsEle.appendChild(liEle);
+                }
+            };
+        </script>
+        <script src="calculator.js" />
+    </body>
+</html>

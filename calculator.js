@@ -144,10 +144,10 @@ Array.prototype.equals = function (array) {
 // Hide method from for-in loops
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 
-
-let cost_modifier = 1;
-let funds_available = 18000;
-let num_factories = 3;
-let num_airports = 1;
-let num_ports = 1;
-console.log('result', getPurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports));
+// quick testing
+// let cost_modifier = 1;
+// let funds_available = 18000;
+// let num_factories = 3;
+// let num_airports = 1;
+// let num_ports = 1;
+// console.log('result', getPurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports));
