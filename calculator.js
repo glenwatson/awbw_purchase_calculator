@@ -45,8 +45,23 @@ function get_possible_purchases(unit_cost_lookup, funds) {
 function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports) {
     base_case_records = {};
     calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, []);
-    return Object.values(base_case_records);
+    // Format these janky results
+    return Object.entries(base_case_records)
+        .map((e) => {
+            return [parseInt(e[0].split(',')[0]), e[1]];
+        }
+    );
 }
+/**
+ * 
+ * @param {float} cost_modifier 
+ * @param {int} funds_available 
+ * @param {int} num_factories 
+ * @param {int} num_airports 
+ * @param {int} num_ports 
+ * @param {Array<string>} units 
+ * @returns {string: Array<string>}
+ */
 function calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, units) {
     if ([funds_available, num_factories, num_airports, num_ports] in base_case_records &&
         base_case_records[[funds_available, num_factories, num_airports, num_ports]].equals(units.sort(compareFn))

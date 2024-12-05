@@ -46,9 +46,10 @@
                 const resultsEle = document.querySelector("#results > ul");
                 resultsEle.innerHTML = "";
                 for (const option of purchaseOptions) {
-                    const purchases = option.join(", ");
+                    const funds_left = option[0];
+                    const purchases = option[1].join(", ");
                     const liEle = document.createElement('li');
-                    liEle.innerText = purchases;
+                    liEle.innerText = funds_left + " - " + purchases;
                     resultsEle.appendChild(liEle);
                 }
             };
