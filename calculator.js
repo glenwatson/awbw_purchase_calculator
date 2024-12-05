@@ -29,11 +29,12 @@ const port_unit_costs = {
     'Battleship': 28000,
     'Carrier': 30000,
 };
+const all_units = {...factory_unit_costs, ...airport_unit_costs, ...port_unit_costs};
 /** Object{[funds_available, num_factories, num_airports, num_ports]: Array<units>} */
 let base_case_records;
 
 let compareFn = function(unitX, unitY) {
-    return unitX.localeCompare(unitY); // TODO - allow sorting by value, unit type, etc.
+    return all_units[unitY] - all_units[unitX];
 };
 
 function get_possible_purchases(unit_cost_lookup, funds) {
@@ -46,7 +47,6 @@ function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_a
     base_case_records = {};
     calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, []);
     // Format these janky results
-    const all_units = {...factory_unit_costs, ...airport_unit_costs, ...port_unit_costs};
     return Object.entries(base_case_records)
         .map((e) => {
             return [
