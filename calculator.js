@@ -30,8 +30,8 @@ const port_unit_costs = {
     'Carrier': 30000,
 };
 const all_units = {...factory_unit_costs, ...airport_unit_costs, ...port_unit_costs};
-/** Object{"[funds_available, num_factories, num_airports, num_ports, Array<units>]: [funds_available, num_factories, num_airports, num_ports, Array<units>]} */
-let base_case_records;
+/** Set{"[funds_available, num_factories, num_airports, num_ports, Array<units>]"} */
+let base_case_records = new Set();
 
 let compareFn = function(unitX, unitY) {
     return all_units[unitY] - all_units[unitX];
@@ -44,14 +44,23 @@ function get_possible_purchases(unit_cost_lookup, funds) {
 }
 
 function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports) {
-    base_case_records = {};
+    base_case_records = new Set();
     calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, []);
     // Format these janky results
-    return Object.entries(base_case_records)
+    return [...base_case_records]
         .map((e) => {
+            const split = e.split(',');
+            const funds_left = parseInt(split[0]);
+            const factories_left = parseInt(split[1]);
+            const airports_left = parseInt(split[2]);
+            const ports_left = parseInt(split[3]);
+            const unit_names = [];
+            for (let i=4; i<split.length; i++) {
+                unit_names.push(split[i]);
+            }
             return [
-                parseInt(e[0].split(',')[0]),
-                e[1].map(unit_name => {
+                funds_left,
+                unit_names.map(unit_name => {
                     return {
                         'unit': unit_name,
                         'cost': all_units[unit_name]
@@ -72,13 +81,13 @@ function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_a
  */
 function calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, units) {
     const sorted_units = units.sort(compareFn);
-    if ([funds_available, num_factories, num_airports, num_ports, sorted_units] in base_case_records) {
+    if ([funds_available, num_factories, num_airports, num_ports, sorted_units].toString() in base_case_records) {
         // skip calculating (duplicating work)
         return;
     }
     if (num_factories == 0 && num_airports == 0 && num_ports == 0) {
         // base case - all production tiles have been used
-        base_case_records[[funds_available, num_factories, num_airports, num_ports, sorted_units]] = sorted_units;
+        base_case_records.add([funds_available, num_factories, num_airports, num_ports, sorted_units].toString());
         return;
     }
     const possible_factory_purchases = get_possible_purchases(factory_unit_costs, funds_available);
@@ -86,8 +95,7 @@ function calculatePurchaseOptions(cost_modifier, funds_available, num_factories,
     const possible_port_purchases = get_possible_purchases(port_unit_costs, funds_available);
     if (possible_factory_purchases.length == 0 && possible_airport_purchases.length == 0 && possible_port_purchases.length == 0) {
         // base case - can't afford anything from and production tiles
-        if (units == undefined) debugger;
-        base_case_records[[funds_available, num_factories, num_airports, num_ports, sorted_units]] = sorted_units;
+        base_case_records.add([funds_available, num_factories, num_airports, num_ports, sorted_units].toString());
         return;
     }
     // TODO: start with the most expensive purchase
