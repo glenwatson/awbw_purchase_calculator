@@ -30,7 +30,7 @@ const port_unit_costs = {
     'Carrier': 30000,
 };
 const all_units = {...factory_unit_costs, ...airport_unit_costs, ...port_unit_costs};
-/** Object{[funds_available, num_factories, num_airports, num_ports]: Array<units>} */
+/** Object{"[funds_available, num_factories, num_airports, num_ports, Array<units>]: [funds_available, num_factories, num_airports, num_ports, Array<units>]} */
 let base_case_records;
 
 let compareFn = function(unitX, unitY) {
@@ -71,15 +71,14 @@ function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_a
  * @param {Array<string>} units
  */
 function calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, units) {
-    if ([funds_available, num_factories, num_airports, num_ports] in base_case_records &&
-        base_case_records[[funds_available, num_factories, num_airports, num_ports]].equals(units.sort(compareFn))
-    ) {
+    const sorted_units = units.sort(compareFn);
+    if ([funds_available, num_factories, num_airports, num_ports, sorted_units] in base_case_records) {
         // skip calculating (duplicating work)
         return;
     }
     if (num_factories == 0 && num_airports == 0 && num_ports == 0) {
         // base case - all production tiles have been used
-        base_case_records[[funds_available, num_factories, num_airports, num_ports]] = units.sort(compareFn);
+        base_case_records[[funds_available, num_factories, num_airports, num_ports, sorted_units]] = sorted_units;
         return;
     }
     const possible_factory_purchases = get_possible_purchases(factory_unit_costs, funds_available);
@@ -88,7 +87,7 @@ function calculatePurchaseOptions(cost_modifier, funds_available, num_factories,
     if (possible_factory_purchases.length == 0 && possible_airport_purchases.length == 0 && possible_port_purchases.length == 0) {
         // base case - can't afford anything from and production tiles
         if (units == undefined) debugger;
-        base_case_records[[funds_available, num_factories, num_airports, num_ports]] = units.sort(compareFn);
+        base_case_records[[funds_available, num_factories, num_airports, num_ports, sorted_units]] = sorted_units;
         return;
     }
     // TODO: start with the most expensive purchase
