@@ -85,15 +85,12 @@ function calculatePurchaseOptions(cost_modifier, funds_available, num_factories,
         // skip calculating (duplicating work)
         return;
     }
-    if (num_factories == 0 && num_airports == 0 && num_ports == 0) {
-        // base case - all production tiles have been used
-        base_case_records.add([funds_available, num_factories, num_airports, num_ports, sorted_units].toString());
-        return;
-    }
-    const possible_factory_purchases = get_possible_purchases(factory_unit_costs, funds_available);
-    const possible_airport_purchases = get_possible_purchases(airport_unit_costs, funds_available);
-    const possible_port_purchases = get_possible_purchases(port_unit_costs, funds_available);
-    if (possible_factory_purchases.length == 0 && possible_airport_purchases.length == 0 && possible_port_purchases.length == 0) {
+    const possible_factory_purchases = num_factories > 0 ? get_possible_purchases(factory_unit_costs, funds_available) : [];
+    const possible_airport_purchases = num_airports > 0 ? get_possible_purchases(airport_unit_costs, funds_available) : [];
+    const possible_port_purchases = num_ports > 0 ? get_possible_purchases(port_unit_costs, funds_available) : [];
+    if (possible_factory_purchases.length === 0 &&
+        possible_airport_purchases.length === 0 &&
+        possible_port_purchases.length === 0) {
         // base case - can't afford anything from and production tiles
         base_case_records.add([funds_available, num_factories, num_airports, num_ports, sorted_units].toString());
         return;
