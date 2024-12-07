@@ -35,6 +35,7 @@
         </div>
         <div>
             <button id="calculate">Calculate purchase options</button>
+            <button id="kill">Stop calculations</button>
         </div>
         <div>
             <div id="sorts">
@@ -52,6 +53,21 @@
             Tip: Want to base skip? Reduce the # of bases by 1!
         </div>
         <script>
+            let purchaseOptionsWorker;
+            function setupPurchaseOptionsWorker() {
+                purchaseOptionsWorker = new Worker("calculator.js");
+                purchaseOptionsWorker.onmessage = (e) => {
+                    purchaseOptions = e.data;
+                    renderPurchaseOptions();
+                    stopLoading();
+                };
+            }
+            setupPurchaseOptionsWorker();
+            document.querySelector("#kill").onclick = async () => {
+                startLoading();
+                purchaseOptionsWorker.terminate();
+                setupPurchaseOptionsWorker();
+            };
             let purchaseOptions;
             let sortFn = (x, y) => x - y;
             document.querySelector('#sort_funds').onclick = () => {
@@ -68,9 +84,15 @@
                 const numAirports = parseInt(document.querySelector("#airports").value);
                 const numPorts = parseInt(document.querySelector("#ports").value);
                 const costModifier = parseFloat(document.querySelector("#cost_modifier").value);
-                purchaseOptions = getPurchaseOptions(costModifier, funds, numFactories, numAirports, numPorts);
-                renderPurchaseOptions();
+                purchaseOptionsWorker.postMessage([costModifier, funds, numFactories, numAirports, numPorts]);
+                startLoading();
             };
+            function startLoading() {
+                document.querySelector("#calculate").disabled = "disabled";
+            }
+            function stopLoading() {
+                document.querySelector("#calculate").disabled = false;
+            }
             function renderPurchaseOptions() {
                 const resultsEle = document.querySelector("#results");
                 resultsEle.innerHTML = "";
@@ -83,6 +105,5 @@
                 }
             }
         </script>
-        <script src="calculator.js"></script>
     </body>
 </html>

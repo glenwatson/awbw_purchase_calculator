@@ -31,7 +31,7 @@ const port_unit_costs = {
 };
 const all_units = {...factory_unit_costs, ...airport_unit_costs, ...port_unit_costs};
 /** Set{"[funds_available, num_factories, num_airports, num_ports, Array<units>]"} */
-let base_case_records = new Set();
+let base_case_records = undefined;
 
 let compareFn = function(unitX, unitY) {
     return all_units[unitY] - all_units[unitX];
@@ -170,6 +170,11 @@ Array.prototype.equals = function (array) {
 }
 // Hide method from for-in loops
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
+
+onmessage = (e) => {
+    postMessage(getPurchaseOptions(e.data[0], e.data[1], e.data[2], e.data[3], e.data[4]));
+};
+
 
 // quick testing
 // let cost_modifier = 1;
