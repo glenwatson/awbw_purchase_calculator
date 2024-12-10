@@ -43,6 +43,20 @@ function get_possible_purchases(unit_cost_lookup, funds) {
         .map(entry => entry[0]);
 }
 
+/**
+ *
+ * @param cost_modifier the ratio of the cost to pay for each unit
+ * @param funds_available the money to spend
+ * @param num_factories number of factories available to spend money
+ * @param num_airports number of airports available to spend money
+ * @param num_ports number of ports available to spend money
+ * @returns {[number,number,number,number,{unit: string, cost: number}[]][]} [
+ *  funds_left_over,
+ *  factories_left_over,
+ *  airports_left_over,
+ *  ports_left_over,
+ *  [units_purchased]]
+ */
 function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports) {
     base_case_records = new Set();
     calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, []);
@@ -60,6 +74,9 @@ function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_a
             }
             return [
                 funds_left,
+                factories_left,
+                airports_left,
+                ports_left,
                 unit_names.map(unit_name => {
                     return {
                         'unit': unit_name,
