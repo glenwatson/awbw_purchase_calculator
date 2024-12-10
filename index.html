@@ -38,9 +38,12 @@
             <button id="kill">Stop calculations</button>
         </div>
         <div>
-            <div id="sorts">
+            <div id="output_controls">
                 <button id="sort_funds">Sort by funds left over</button>
                 <button id="sort_unit_price">Sort by most expensive unit</button>
+                <input type="checkbox" id="base_skip_factories" checked>Base skip factories</input>
+                <input type="checkbox" id="base_skip_airports" checked>Base skip airports</input>
+                <input type="checkbox" id="base_skip_ports" checked>Base skip ports</input>
             </div>
             <ul>
                 <li>Funds left over - Purchase list</li>
@@ -72,12 +75,14 @@
             let sortFn = (x, y) => x - y;
             document.querySelector('#sort_funds').onclick = () => {
                 sortFn = (x, y) => x[0] - y[0];
-                renderPurchaseOptions();
             };
             document.querySelector('#sort_unit_price').onclick = () => {
-                sortFn = (x, y) => y[1][0].cost - x[1][0].cost;
-                renderPurchaseOptions();
+                sortFn = (x, y) => y[4][0].cost - x[4][0].cost;
             };
+            // Make all output_controls rerender the results
+            document.querySelector('#output_controls').addEventListener("click", () => {
+              renderPurchaseOptions();
+            });
             document.querySelector("#calculate").onclick = () => {
                 const funds = parseInt(document.querySelector("#funds").value);
                 const numFactories = parseInt(document.querySelector("#factories").value);
@@ -98,7 +103,15 @@
                 resultsEle.innerHTML = "";
                 for (const option of purchaseOptions.sort(sortFn)) {
                     const funds_left = option[0];
-                    const purchases = option[1].map(o => o.unit).join(", ");
+                    const factories_left = option[1];
+                    const airports_left = option[2];
+                    const ports_left = option[3];
+                    if ((!document.querySelector('#base_skip_factories').checked && factories_left > 0) ||
+                        (!document.querySelector('#base_skip_airports').checked && airports_left > 0) ||
+                        (!document.querySelector('#base_skip_ports').checked && ports_left > 0)) {
+                      continue;
+                    }
+                    const purchases = option[4].map(o => o.unit).join(", ");
                     const liEle = document.createElement('li');
                     liEle.innerText = funds_left + " - " + purchases;
                     resultsEle.appendChild(liEle);
