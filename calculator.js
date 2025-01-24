@@ -37,9 +37,16 @@ let compareFn = function(unitX, unitY) {
     return all_units[unitY] - all_units[unitX];
 };
 
-function get_possible_purchases(unit_cost_lookup, funds) {
+/**
+ * Calculates all possible purchases given funds and units to exclude
+ * @param {Map<string, number} unit_cost_lookup cost of each unit
+ * @param {number} funds available funds
+ * @param {Set<string>} exclude_set units to exclude
+ * @returns
+ */
+function get_possible_purchases(unit_cost_lookup, funds, exclude_set) {
     return Object.entries(unit_cost_lookup)
-        .filter(entry => funds >= entry[1])
+        .filter(entry => funds >= entry[1] && !exclude_set.has(entry[0]))
         .map(entry => entry[0]);
 }
 
@@ -50,6 +57,7 @@ function get_possible_purchases(unit_cost_lookup, funds) {
  * @param num_factories number of factories available to spend money
  * @param num_airports number of airports available to spend money
  * @param num_ports number of ports available to spend money
+ * @param filters Array<string> names of the units to exclude
  * @returns {[number,number,number,number,{unit: string, cost: number}[]][]} [
  *  funds_left_over,
  *  factories_left_over,
@@ -57,9 +65,9 @@ function get_possible_purchases(unit_cost_lookup, funds) {
  *  ports_left_over,
  *  [units_purchased]]
  */
-function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports) {
+function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, filters) {
     base_case_records = new Set();
-    calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, []);
+    calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, filters, []);
     // Format these janky results
     return [...base_case_records]
         .map((e) => {
@@ -94,17 +102,19 @@ function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_a
  * @param {int} num_factories 
  * @param {int} num_airports 
  * @param {int} num_ports 
+ * @param {Array<string>} filters
  * @param {Array<string>} units
  */
-function calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, units) {
+function calculatePurchaseOptions(cost_modifier, funds_available, num_factories, num_airports, num_ports, filters, units) {
     const sorted_units = units.sort(compareFn);
     if ([funds_available, num_factories, num_airports, num_ports, sorted_units].toString() in base_case_records) {
         // skip calculating (duplicating work)
         return;
     }
-    const possible_factory_purchases = num_factories > 0 ? get_possible_purchases(factory_unit_costs, funds_available) : [];
-    const possible_airport_purchases = num_airports > 0 ? get_possible_purchases(airport_unit_costs, funds_available) : [];
-    const possible_port_purchases = num_ports > 0 ? get_possible_purchases(port_unit_costs, funds_available) : [];
+    const exclude_set = new Set(filters);
+    const possible_factory_purchases = num_factories == 0 ? [] : get_possible_purchases(factory_unit_costs, funds_available, exclude_set);
+    const possible_airport_purchases = num_airports == 0 ? [] : get_possible_purchases(airport_unit_costs, funds_available, exclude_set);
+    const possible_port_purchases = num_ports == 0 ? [] : get_possible_purchases(port_unit_costs, funds_available, exclude_set);
     if (possible_factory_purchases.length === 0 &&
         possible_airport_purchases.length === 0 &&
         possible_port_purchases.length === 0) {
@@ -123,6 +133,7 @@ function calculatePurchaseOptions(cost_modifier, funds_available, num_factories,
                 num_factories - 1,
                 num_airports, 
                 num_ports, 
+                filters,
                 new_units);
         }
     }
@@ -136,6 +147,7 @@ function calculatePurchaseOptions(cost_modifier, funds_available, num_factories,
                 num_factories,
                 num_airports - 1, 
                 num_ports, 
+                filters,
                 new_units);
         }
     }
@@ -149,6 +161,7 @@ function calculatePurchaseOptions(cost_modifier, funds_available, num_factories,
                 num_factories,
                 num_airports, 
                 num_ports - 1, 
+                filters,
                 new_units);
         }
     }
@@ -189,7 +202,7 @@ Array.prototype.equals = function (array) {
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 
 onmessage = (e) => {
-    postMessage(getPurchaseOptions(e.data[0], e.data[1], e.data[2], e.data[3], e.data[4]));
+    postMessage(getPurchaseOptions(e.data[0], e.data[1], e.data[2], e.data[3], e.data[4], e.data[5]));
 };
 
 

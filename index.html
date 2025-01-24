@@ -33,6 +33,109 @@
             <input type="number" name="cost_modifier" id="cost_modifier" value="1.0" step="0.05" min="0" max="2" />
             <span>Tip: Colin=0.8, Kanbei=1.2, Hachi(Merchant Union)=0.5: Nell(Barter)=0.5, High Funds=multiply by x2</span>
         </div>
+        Exclude:
+        <div id="filters">
+            <span class="checkbox">
+                <label for="filter_infantry">Infantry</label>
+                <input type="checkbox" id="filter_infantry" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_mech">Mech</label>
+                <input type="checkbox" id="filter_mech" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_recon">Recon</label>
+                <input type="checkbox" id="filter_recon" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_apc">APC</label>
+                <input type="checkbox" id="filter_apc" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_artillery">Artillery</label>
+                <input type="checkbox" id="filter_artillery" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_tank">Tank</label>
+                <input type="checkbox" id="filter_tank" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_anti_air">Anti-Air</label>
+                <input type="checkbox" id="filter_anti_air" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_missile">Missile</label>
+                <input type="checkbox" id="filter_missile" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_rocket">Rocket</label>
+                <input type="checkbox" id="filter_rocket" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_md_ank">Md.Tank</label>
+                <input type="checkbox" id="filter_md_ank" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_piperunner">Piperunner</label>
+                <input type="checkbox" id="filter_piperunner" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_neotank">Neotank</label>
+                <input type="checkbox" id="filter_neotank" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_mega_tank">Mega Tank</label>
+                <input type="checkbox" id="filter_mega_tank" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_t_copter">T-Copter</label>
+                <input type="checkbox" id="filter_t_copter" />
+            </span>
+            <span class="checkbox">
+                <label for="filter_b_copter">B-Copter</label>
+                <input type="checkbox" id="filter_b_copter"/>
+            </span>
+            <span class="checkbox">
+                <label for="filter_fighter">Fighter</label>
+                <input type="checkbox" id="filter_fighter"/>
+            </span>
+            <span class="checkbox">
+                <label for="filter_bomber">Bomber</label>
+                <input type="checkbox" id="filter_bomber"/>
+            </span>
+            <span class="checkbox">
+                <label for="filter_black_bomb">Black Bomb</label>
+                <input type="checkbox" id="filter_black_bomb"/>
+            </span>
+            <span class="checkbox">
+                <label for="filter_stealth">Stealth</label>
+                <input type="checkbox" id="filter_stealth"/>
+            </span>
+            <span class="checkbox">
+                <label for="filter_black_boat">Black Boat</label>
+                <input type="checkbox" id="filter_black_boat"/>
+            </span>
+            <span class="checkbox">
+                <label for="filter_lander">Lander</label>
+                <input type="checkbox" id="filter_lander"/>
+            </span>
+            <span class="checkbox">
+                <label for="filter_cruiser">Cruiser</label>
+                <input type="checkbox" id="filter_cruiser"/>
+            </span>
+            <span class="checkbox">
+                <label for="filter_sub">Sub</label>
+                <input type="checkbox" id="filter_sub"/>
+            </span>
+            <span class="checkbox">
+                <label for="filter_battleship">Battleship</label>
+                <input type="checkbox" id="filter_battleship"/>
+            </span>
+            <span class="checkbox">
+                <label for="filter_carrier">Carrier</label>
+                <input type="checkbox" id="filter_carrier"/>
+            </span>
+        </div>
         <div>
             <button id="calculate">Calculate purchase options</button>
             <button id="kill">Stop calculations</button>
@@ -55,109 +158,6 @@
                     <span class="checkbox">
                         <label for="base_skip_ports">Base skip ports?</label>
                         <input type="checkbox" id="base_skip_ports" checked />
-                    </span>
-                </div>
-                Exclude:
-                <div id="filters">
-                    <span class="checkbox">
-                        <label for="filter_infantry">Infantry</label>
-                        <input type="checkbox" id="filter_infantry" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_mech">Mech</label>
-                        <input type="checkbox" id="filter_mech" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_recon">Recon</label>
-                        <input type="checkbox" id="filter_recon" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_apc">APC</label>
-                        <input type="checkbox" id="filter_apc" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_artillery">Artillery</label>
-                        <input type="checkbox" id="filter_artillery" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_tank">Tank</label>
-                        <input type="checkbox" id="filter_tank" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_anti_air">Anti-Air</label>
-                        <input type="checkbox" id="filter_anti_air" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_missile">Missile</label>
-                        <input type="checkbox" id="filter_missile" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_rocket">Rocket</label>
-                        <input type="checkbox" id="filter_rocket" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_md_ank">Md.Tank</label>
-                        <input type="checkbox" id="filter_md_ank" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_piperunner">Piperunner</label>
-                        <input type="checkbox" id="filter_piperunner" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_neotank">Neotank</label>
-                        <input type="checkbox" id="filter_neotank" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_mega_tank">Mega Tank</label>
-                        <input type="checkbox" id="filter_mega_tank" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_t_copter">T-Copter</label>
-                        <input type="checkbox" id="filter_t_copter" />
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_b_copter">B-Copter</label>
-                        <input type="checkbox" id="filter_b_copter"/>
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_fighter">Fighter</label>
-                        <input type="checkbox" id="filter_fighter"/>
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_bomber">Bomber</label>
-                        <input type="checkbox" id="filter_bomber"/>
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_black_bomb">Black Bomb</label>
-                        <input type="checkbox" id="filter_black_bomb"/>
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_stealth">Stealth</label>
-                        <input type="checkbox" id="filter_stealth"/>
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_black_boat">Black Boat</label>
-                        <input type="checkbox" id="filter_black_boat"/>
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_lander">Lander</label>
-                        <input type="checkbox" id="filter_lander"/>
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_cruiser">Cruiser</label>
-                        <input type="checkbox" id="filter_cruiser"/>
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_sub">Sub</label>
-                        <input type="checkbox" id="filter_sub"/>
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_battleship">Battleship</label>
-                        <input type="checkbox" id="filter_battleship"/>
-                    </span>
-                    <span class="checkbox">
-                        <label for="filter_carrier">Carrier</label>
-                        <input type="checkbox" id="filter_carrier"/>
                     </span>
                 </div>
             </div>
@@ -205,8 +205,9 @@
                 const numAirports = parseInt(document.querySelector("#airports").value);
                 const numPorts = parseInt(document.querySelector("#ports").value);
                 const costModifier = parseFloat(document.querySelector("#cost_modifier").value);
-                purchaseOptionsWorker.postMessage([costModifier, funds, numFactories, numAirports, numPorts]);
+                purchaseOptionsWorker.postMessage([costModifier, funds, numFactories, numAirports, numPorts, getFitlers()]);
                 startLoading();
+
             };
             function startLoading() {
                 document.querySelector("#calculate").disabled = "disabled";
@@ -220,7 +221,6 @@
                   .map(ele => ele.querySelector('label').innerText);
             }
             function renderPurchaseOptions() {
-                const filters = new Set(getFitlers());
                 const resultsEle = document.querySelector("#results");
                 resultsEle.innerHTML = "";
                 for (const option of purchaseOptions.sort(sortFn)) {
@@ -234,10 +234,6 @@
                         (!document.querySelector('#base_skip_airports').checked && airports_left > 0) ||
                         (!document.querySelector('#base_skip_ports').checked && ports_left > 0)) {
                       continue;
-                    }
-                    // Filter excluded units
-                    if (filters.intersection(new Set(purchases)).size > 0) {
-                        continue;
                     }
                     const liEle = document.createElement('li');
                     liEle.innerText = funds_left + " - " + purchases.join(", ");
