@@ -4,6 +4,9 @@
             .inputOption {
 
             }
+            .clickable {
+                cursor: pointer;
+            }
             #calculate {
                 font-weight: bold;
                 padding: 1em;
@@ -286,14 +289,23 @@
                     const childEles = document.createElement('ul');
                     // if there are next turn calculations
                     if (option.next_turn) {
-                        for (const option of purchaseOptions.sort(sortFn)) {
-                          const childEle = renderPurchaseOptionsHelper(option);
+                        for (const nextTurnOption of option.next_turn.sort(sortFn)) {
+                          const childEle = document.createElement('li');
+                          childEle.innerText = renderPurchaseOptionsHelper(nextTurnOption);
                           if (childEle != null) {
                               childEles.appendChild(childEle);
                           }
                         }
                     }
-                    const liEle = renderPurchaseOptionsHelper(option);
+                    // toggle next purchase options on click
+                    childEles.style.display = 'none';
+
+                    const liClickableTextEle = document.createElement('span');
+                    liClickableTextEle.innerText = renderPurchaseOptionsHelper(option);
+                    liClickableTextEle.classList.add('clickable');
+                    liClickableTextEle.onclick = () => {childEles.style.display = childEles.style.display == 'none' ? 'block' : 'none'};
+                    const liEle = document.createElement('li');
+                    liEle.appendChild(liClickableTextEle);
                     liEle.appendChild(childEles);
                     resultsEle.appendChild(liEle);
                 }
@@ -311,9 +323,7 @@
                     return;
                 }
 
-                const liEle = document.createElement('li');
-                liEle.innerText = funds_left + " - " + purchases.join(", ");
-                return liEle;
+                return funds_left + " - " + purchases.join(", ");
             }
 
         </script>
