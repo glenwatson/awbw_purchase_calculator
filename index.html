@@ -144,7 +144,10 @@
             </div>
         </div>
         <div class="border">
-            Next Turn Calculations:
+            <span class="checkbox">
+                <label for="enable_next_turn_calculations">Enable Next Turn Calculations?</label>
+                <input type="checkbox" id="enable_next_turn_calculations" />
+            </span>
             <div class="inputOption">
                 <label for="repair">Repair bill</label>
                 <input type="number" name="repair" id="repair" value="0" step="100" min="0" max="1000000" />
@@ -258,15 +261,17 @@
                     // start calculations for the next turn
                     const repairCost = parseInt(document.querySelector("#repair").value);
                     const additionalFunds = parseInt(document.querySelector("#next_funds").value);
-                    for (const option of purchaseOptions.sort(sortFn)) {
-                        const fundsLeftOver = option[0];
-                        addWorkerTask([costModifier, funds + fundsLeftOver - repairCost + additionalFunds,
+                    if (document.querySelector('#enable_next_turn_calculations').checked) {
+                        for (const option of purchaseOptions.sort(sortFn)) {
+                            const fundsLeftOver = option[0];
+                            addWorkerTask([costModifier, funds + fundsLeftOver - repairCost + additionalFunds,
                                 numFactories, numAirports, numPorts, getFitlers()]).then((event) => {
-                            option.next_turn = event.data;
-                            renderPurchaseOptions();
-                        }).catch((error) => {
-                          console.error(error);
-                        });
+                                option.next_turn = event.data;
+                                renderPurchaseOptions();
+                            }).catch((error) => {
+                                console.error(error);
+                            });
+                        }
                     }
                 }).catch((error) => {
                     console.error(error);
@@ -291,32 +296,32 @@
                 const resultsEle = document.querySelector("#results");
                 resultsEle.innerHTML = "";
                 for (const option of purchaseOptions.sort(sortFn)) {
-                    const childEles = document.createElement('ul');
-                    // if there are next turn calculations
-                    if (option.next_turn) {
-                        for (const nextTurnOption of option.next_turn.sort(sortFn)) {
-                            const childEle = document.createElement('li');
-                            const optionDisplayText = renderPurchaseOptionsHelper(nextTurnOption);
-                            if (optionDisplayText) {
-                                childEle.innerText = optionDisplayText;
-                                childEles.appendChild(childEle);
-                            }
-                        }
-                    }
-                    // toggle next purchase options on click
-                    childEles.style.display = 'none';
-
-                    const liClickableTextEle = document.createElement('span');
                     const optionDisplayText = renderPurchaseOptionsHelper(option);
                     if (optionDisplayText) {
+                        const liClickableTextEle = document.createElement('span');
                         liClickableTextEle.innerText = optionDisplayText;
-                        liClickableTextEle.classList.add('clickable');
-                        liClickableTextEle.onclick = () => {
-                            childEles.style.display = childEles.style.display === 'none' ? 'block' : 'none'
-                        };
                         const liEle = document.createElement('li');
                         liEle.appendChild(liClickableTextEle);
-                        liEle.appendChild(childEles);
+                        // if there are next turn calculations
+                        if (option.next_turn) {
+                            // render children <li>
+                            const childEles = document.createElement('ul');
+                            for (const nextTurnOption of option.next_turn.sort(sortFn)) {
+                                const childEle = document.createElement('li');
+                                const optionDisplayText = renderPurchaseOptionsHelper(nextTurnOption);
+                                if (optionDisplayText) {
+                                    childEle.innerText = optionDisplayText;
+                                    childEles.appendChild(childEle);
+                                }
+                            }
+                            // toggle next purchase options on click
+                            childEles.style.display = 'none';
+                            liClickableTextEle.classList.add('clickable');
+                            liClickableTextEle.onclick = () => {
+                                childEles.style.display = childEles.style.display === 'none' ? 'block' : 'none'
+                            };
+                            liEle.appendChild(childEles);
+                        }
                         resultsEle.appendChild(liEle);
                     }
                 }
