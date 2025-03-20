@@ -295,24 +295,30 @@
                     // if there are next turn calculations
                     if (option.next_turn) {
                         for (const nextTurnOption of option.next_turn.sort(sortFn)) {
-                          const childEle = document.createElement('li');
-                          childEle.innerText = renderPurchaseOptionsHelper(nextTurnOption);
-                          if (childEle != null) {
-                              childEles.appendChild(childEle);
-                          }
+                            const childEle = document.createElement('li');
+                            const optionDisplayText = renderPurchaseOptionsHelper(nextTurnOption);
+                            if (optionDisplayText) {
+                                childEle.innerText = optionDisplayText;
+                                childEles.appendChild(childEle);
+                            }
                         }
                     }
                     // toggle next purchase options on click
                     childEles.style.display = 'none';
 
                     const liClickableTextEle = document.createElement('span');
-                    liClickableTextEle.innerText = renderPurchaseOptionsHelper(option);
-                    liClickableTextEle.classList.add('clickable');
-                    liClickableTextEle.onclick = () => {childEles.style.display = childEles.style.display == 'none' ? 'block' : 'none'};
-                    const liEle = document.createElement('li');
-                    liEle.appendChild(liClickableTextEle);
-                    liEle.appendChild(childEles);
-                    resultsEle.appendChild(liEle);
+                    const optionDisplayText = renderPurchaseOptionsHelper(option);
+                    if (optionDisplayText) {
+                        liClickableTextEle.innerText = optionDisplayText;
+                        liClickableTextEle.classList.add('clickable');
+                        liClickableTextEle.onclick = () => {
+                            childEles.style.display = childEles.style.display === 'none' ? 'block' : 'none'
+                        };
+                        const liEle = document.createElement('li');
+                        liEle.appendChild(liClickableTextEle);
+                        liEle.appendChild(childEles);
+                        resultsEle.appendChild(liEle);
+                    }
                 }
             }
             function renderPurchaseOptionsHelper(option) {
