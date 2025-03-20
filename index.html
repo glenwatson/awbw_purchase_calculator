@@ -136,6 +136,18 @@
                 <input type="checkbox" id="filter_carrier"/>
             </span>
         </div>
+    <div>
+        Next Turn Calculations: 
+        <div class="inputOption">
+            <label for="repair">Repair bill</label>
+            <input type="number" name="repair" id="repair" value="1000" step="100" min="0" max="1000000" />
+            Hint: you can see your repair bill by mousing over your money in the move planner
+        </div>
+        <div class="inputOption">
+            <label for="next_funds">Additional funds earning: </label>
+            <input type="number" name="next_funds" id="next_funds" value="1000" step="1000" min="0" max="1000000" />
+        </div>
+    </div>
         <div>
             <button id="calculate">Calculate purchase options</button>
             <button id="kill">Stop calculations</button>
@@ -173,21 +185,49 @@
         </div>
         <script>
             let purchaseOptionsWorker;
+            let workerTaskQueue = [];
+            let isWorkerProcessing = false;
             function setupPurchaseOptionsWorker() {
                 purchaseOptionsWorker = new Worker("calculator.js");
-                purchaseOptionsWorker.onmessage = (e) => {
-                    purchaseOptions = e.data;
-                    renderPurchaseOptions();
-                    stopLoading();
+                workerTaskQueue = [];
+                isWorkerProcessing = false;
+                purchaseOptionsWorker.onmessage = (event) => {
+                      const { resolve } = workerTaskQueue.shift();
+                      resolve(event);
+                      isWorkerProcessing = false;
+                      processNextWorkerTask();
+                };
+
+                purchaseOptionsWorker.onerror = (error) => {
+                    console.error("Worker Error:", error);
+                    if (workerTaskQueue.length > 0) {
+                        const { reject } = workerTaskQueue.shift();
+                        reject(error);
+                    }
+                    isWorkerProcessing = false;
+                    processNextWorkerTask();
                 };
             }
             setupPurchaseOptionsWorker();
+            function addWorkerTask(data) {
+                return new Promise((resolve, reject) => {
+                    workerTaskQueue.push({ data, resolve, reject });
+                    processNextWorkerTask();
+                });
+            }
+            function processNextWorkerTask() {
+                if (isWorkerProcessing || workerTaskQueue.length === 0) {
+                  return;
+                }
+                isWorkerProcessing = true;
+                purchaseOptionsWorker.postMessage(workerTaskQueue[0].data);
+            }
             document.querySelector("#kill").onclick = async () => {
                 startLoading();
                 purchaseOptionsWorker.terminate();
                 setupPurchaseOptionsWorker();
             };
-            let purchaseOptions;
+           let purchaseOptions;
             let sortFn = (x, y) => x - y;
             document.querySelector('#sort_funds').onclick = () => {
                 sortFn = (x, y) => x[0] - y[0];
@@ -205,9 +245,28 @@
                 const numAirports = parseInt(document.querySelector("#airports").value);
                 const numPorts = parseInt(document.querySelector("#ports").value);
                 const costModifier = parseFloat(document.querySelector("#cost_modifier").value);
-                purchaseOptionsWorker.postMessage([costModifier, funds, numFactories, numAirports, numPorts, getFitlers()]);
-                startLoading();
+                addWorkerTask([costModifier, funds, numFactories, numAirports, numPorts, getFitlers()]).then((event) => {
+                    purchaseOptions = event.data;
 
+                    // start calculations for the next turn
+                    const repairCost = parseInt(document.querySelector("#repair").value);
+                    const additionalFunds = parseInt(document.querySelector("#next_funds").value);
+                    for (const option of purchaseOptions.sort(sortFn)) {
+                        const fundsLeftOver = option[0];
+                        addWorkerTask([costModifier, funds + fundsLeftOver - repairCost + additionalFunds, numFactories, numAirports, numPorts, getFitlers()]).then((event) => {
+                            option.next_turn = event.data;
+                            renderPurchaseOptions();
+                        }).catch((error) => {
+                          console.error(error);
+                        });
+                    }
+                }).catch((error) => {
+                    console.error(error);
+                }).finally(() => {
+                    renderPurchaseOptions();
+                    stopLoading();
+                });
+               startLoading();
             };
             function startLoading() {
                 document.querySelector("#calculate").disabled = "disabled";
@@ -224,22 +283,39 @@
                 const resultsEle = document.querySelector("#results");
                 resultsEle.innerHTML = "";
                 for (const option of purchaseOptions.sort(sortFn)) {
-                    const funds_left = option[0];
-                    const factories_left = option[1];
-                    const airports_left = option[2];
-                    const ports_left = option[3];
-                    const purchases = option[4].map(o => o.unit);
-                    // Filter base skipping
-                    if ((!document.querySelector('#base_skip_factories').checked && factories_left > 0) ||
-                        (!document.querySelector('#base_skip_airports').checked && airports_left > 0) ||
-                        (!document.querySelector('#base_skip_ports').checked && ports_left > 0)) {
-                      continue;
+                    const childEles = document.createElement('ul');
+                    // if there are next turn calculations
+                    if (option.next_turn) {
+                        for (const option of purchaseOptions.sort(sortFn)) {
+                          const childEle = renderPurchaseOptionsHelper(option);
+                          if (childEle != null) {
+                              childEles.appendChild(childEle);
+                          }
+                        }
                     }
-                    const liEle = document.createElement('li');
-                    liEle.innerText = funds_left + " - " + purchases.join(", ");
+                    const liEle = renderPurchaseOptionsHelper(option);
+                    liEle.appendChild(childEles);
                     resultsEle.appendChild(liEle);
                 }
             }
+            function renderPurchaseOptionsHelper(option) {
+                const funds_left = option[0];
+                const factories_left = option[1];
+                const airports_left = option[2];
+                const ports_left = option[3];
+                const purchases = option[4].map(o => o.unit);
+                // Filter base skipping
+                if ((!document.querySelector('#base_skip_factories').checked && factories_left > 0) ||
+                   (!document.querySelector('#base_skip_airports').checked && airports_left > 0) ||
+                   (!document.querySelector('#base_skip_ports').checked && ports_left > 0)) {
+                    return;
+                }
+
+                const liEle = document.createElement('li');
+                liEle.innerText = funds_left + " - " + purchases.join(", ");
+                return liEle;
+            }
+
         </script>
     </body>
 </html>
