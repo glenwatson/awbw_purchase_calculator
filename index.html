@@ -17,7 +17,7 @@
     </head>
     <body>
         <div class="inputOption">
-            <label for="funds">Amount of funds available: </label>
+            <label for="funds">Amount of funds available (This turn): </label>
             <input type="number" name="funds" id="funds" value="1000" step="1000" min="0" max="1000000" />
         </div>
         <div class="inputOption">
@@ -154,7 +154,7 @@
                 Tip: you can see your repair bill by mousing over your money in the move planner
             </div>
             <div class="inputOption">
-                <label for="next_funds">Additional funds earning: </label>
+                <label for="next_funds">Amount of funds gained on the next turn: </label>
                 <input type="number" name="next_funds" id="next_funds" value="0" step="1000" min="0" max="1000000" />
             </div>
         </div>
@@ -260,11 +260,11 @@
 
                     // start calculations for the next turn
                     const repairCost = parseInt(document.querySelector("#repair").value);
-                    const additionalFunds = parseInt(document.querySelector("#next_funds").value);
+                    const turn2FundsGained = parseInt(document.querySelector("#next_funds").value);
                     if (document.querySelector('#enable_next_turn_calculations').checked) {
                         for (const option of purchaseOptions.sort(sortFn)) {
                             const fundsLeftOver = option[0];
-                            addWorkerTask([costModifier, funds + fundsLeftOver - repairCost + additionalFunds,
+                            addWorkerTask([costModifier, turn2FundsGained + fundsLeftOver - repairCost,
                                 numFactories, numAirports, numPorts, getFitlers()]).then((event) => {
                                 option.next_turn = event.data;
                                 renderPurchaseOptions();
