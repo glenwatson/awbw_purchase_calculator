@@ -302,10 +302,10 @@
                 const resultsEle = document.querySelector("#results");
                 resultsEle.innerHTML = "";
                 for (const option of purchaseOptions.sort(sortFn)) {
-                    const optionDisplayText = renderPurchaseOptionsHelper(option);
-                    if (optionDisplayText) {
+                    const optionDisplayHtml = renderPurchaseOptionsLine(option);
+                    if (optionDisplayHtml) {
                         const liClickableTextEle = document.createElement('span');
-                        liClickableTextEle.innerText = optionDisplayText;
+                        liClickableTextEle.innerHTML = optionDisplayHtml;
                         const liEle = document.createElement('li');
                         liEle.appendChild(liClickableTextEle);
                         // if there are next turn calculations
@@ -314,9 +314,9 @@
                             const childEles = document.createElement('ul');
                             for (const nextTurnOption of option.next_turn.sort(sortFn)) {
                                 const childEle = document.createElement('li');
-                                const optionDisplayText = renderPurchaseOptionsHelper(nextTurnOption);
-                                if (optionDisplayText) {
-                                    childEle.innerText = optionDisplayText;
+                                const optionDisplayHtml = renderPurchaseOptionsLine(nextTurnOption);
+                                if (optionDisplayHtml) {
+                                    childEle.innerHTML = optionDisplayHtml;
                                     childEles.appendChild(childEle);
                                 }
                             }
@@ -332,18 +332,18 @@
                     }
                 }
             }
-            function renderPurchaseOptionsHelper(option) {
+            function renderPurchaseOptionsLine(option) {
                 const funds_left = option[0];
                 const factories_left = option[1];
                 const airports_left = option[2];
                 const ports_left = option[3];
-                const purchases = option[4].map(o => o.unit);
                 // Filter base skipping
                 if ((!document.querySelector('#base_skip_factories').checked && factories_left > 0) ||
                    (!document.querySelector('#base_skip_airports').checked && airports_left > 0) ||
                    (!document.querySelector('#base_skip_ports').checked && ports_left > 0)) {
                     return;
                 }
+                const purchases = option[4].map(o => '<span title="' + o.cost + 'G">' + o.unit + '</span>');
 
                 return funds_left + " - " + purchases.join(", ");
             }

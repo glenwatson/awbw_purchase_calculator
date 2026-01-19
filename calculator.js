@@ -42,11 +42,12 @@ let compareFn = function(unitX, unitY) {
  * @param {Map<string, number} unit_cost_lookup cost of each unit
  * @param {number} funds available funds
  * @param {Set<string>} exclude_set units to exclude
+ * @param {float} cost_modifier cost multiplier
  * @returns
  */
-function get_possible_purchases(unit_cost_lookup, funds, exclude_set) {
+function get_possible_purchases(unit_cost_lookup, funds, exclude_set, cost_modifier) {
     return Object.entries(unit_cost_lookup)
-        .filter(entry => funds >= entry[1] && !exclude_set.has(entry[0]))
+        .filter(entry => funds >= entry[1] * cost_modifier && !exclude_set.has(entry[0]))
         .map(entry => entry[0]);
 }
 
@@ -88,7 +89,7 @@ function getPurchaseOptions(cost_modifier, funds_available, num_factories, num_a
                 unit_names.map(unit_name => {
                     return {
                         'unit': unit_name,
-                        'cost': all_units[unit_name]
+                        'cost': all_units[unit_name] * cost_modifier
                     }
                 })
             ];
@@ -112,9 +113,9 @@ function calculatePurchaseOptions(cost_modifier, funds_available, num_factories,
         return;
     }
     const exclude_set = new Set(filters);
-    const possible_factory_purchases = num_factories == 0 ? [] : get_possible_purchases(factory_unit_costs, funds_available, exclude_set);
-    const possible_airport_purchases = num_airports == 0 ? [] : get_possible_purchases(airport_unit_costs, funds_available, exclude_set);
-    const possible_port_purchases = num_ports == 0 ? [] : get_possible_purchases(port_unit_costs, funds_available, exclude_set);
+    const possible_factory_purchases = num_factories === 0 ? [] : get_possible_purchases(factory_unit_costs, funds_available, exclude_set, cost_modifier);
+    const possible_airport_purchases = num_airports === 0 ? [] : get_possible_purchases(airport_unit_costs, funds_available, exclude_set, cost_modifier);
+    const possible_port_purchases = num_ports === 0 ? [] : get_possible_purchases(port_unit_costs, funds_available, exclude_set, cost_modifier);
     if (possible_factory_purchases.length === 0 &&
         possible_airport_purchases.length === 0 &&
         possible_port_purchases.length === 0) {
