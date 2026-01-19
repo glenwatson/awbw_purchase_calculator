@@ -301,36 +301,39 @@
             function renderPurchaseOptions() {
                 const resultsEle = document.querySelector("#results");
                 resultsEle.innerHTML = "";
-                for (const option of purchaseOptions.sort(sortFn)) {
+                purchaseOptions.sort(sortFn).map(option => {
                     const optionDisplayHtml = renderPurchaseOptionsLine(option);
-                    if (optionDisplayHtml) {
-                        const liClickableTextEle = document.createElement('span');
-                        liClickableTextEle.innerHTML = optionDisplayHtml;
-                        const liEle = document.createElement('li');
-                        liEle.appendChild(liClickableTextEle);
-                        // if there are next turn calculations
-                        if (option.next_turn) {
-                            // render children <li>
-                            const childEles = document.createElement('ul');
-                            for (const nextTurnOption of option.next_turn.sort(sortFn)) {
-                                const childEle = document.createElement('li');
-                                const optionDisplayHtml = renderPurchaseOptionsLine(nextTurnOption);
-                                if (optionDisplayHtml) {
-                                    childEle.innerHTML = optionDisplayHtml;
-                                    childEles.appendChild(childEle);
-                                }
-                            }
-                            // toggle next purchase options on click
-                            childEles.style.display = 'none';
-                            liClickableTextEle.classList.add('clickable');
-                            liClickableTextEle.onclick = () => {
-                                childEles.style.display = childEles.style.display === 'none' ? 'block' : 'none'
-                            };
-                            liEle.appendChild(childEles);
-                        }
-                        resultsEle.appendChild(liEle);
+                    if (!optionDisplayHtml) {
+                        return;
                     }
-                }
+                    const liClickableTextEle = document.createElement('span');
+                    liClickableTextEle.innerHTML = optionDisplayHtml;
+                    const liEle = document.createElement('li');
+                    liEle.appendChild(liClickableTextEle);
+                    // if there are next turn calculations
+                    if (option.next_turn) {
+                        // render children <li>
+                        const childEles = document.createElement('ul');
+                        option.next_turn.sort(sortFn).map(nextTurnOption => {
+                            const childEle = document.createElement('li');
+                            const optionDisplayHtml = renderPurchaseOptionsLine(nextTurnOption);
+                            if (!optionDisplayHtml) {
+                                return;
+                            }
+                            childEle.innerHTML = optionDisplayHtml;
+                            childEles.appendChild(childEle);
+                        });
+                        // toggle next purchase options on click
+                        childEles.style.display = 'none';
+                        liClickableTextEle.classList.add('clickable');
+                        liClickableTextEle.onclick = () => {
+                            childEles.style.display = childEles.style.display === 'none' ? 'block' : 'none'
+                        };
+                        liEle.appendChild(childEles);
+                    }
+                    return liEle;
+                }).filter(optionDisplayHtml => optionDisplayHtml)
+                .forEach(liEle => resultsEle.appendChild(liEle));
             }
             function renderPurchaseOptionsLine(option) {
                 const funds_left = option[0];
