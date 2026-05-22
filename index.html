@@ -349,9 +349,42 @@
                    (!document.querySelector('#base_skip_ports').checked && ports_left > 0)) {
                     return;
                 }
-                const purchases = option[4].map(o => '<span title="' + o.cost + 'G">' + o.unit + '</span>');
+                const purchases = option[4].map(o => '<span title="' + nanTo0(o.cost) + 'G"><img src="' + getSpriteSrc(o.unit) + '" />' + o.unit + '</span>');
 
                 return funds_left + " - " + purchases.join(", ");
+            }
+            function getSpriteSrc(unitName) {
+              return {
+                'Infantry': 'https://awbw.amarriner.com/terrain/ani/osinfantry.gif',
+                'Mech': 'https://awbw.amarriner.com/terrain/ani/osmech.gif',
+                'Recon': 'https://awbw.amarriner.com/terrain/ani/osrecon.gif',
+                'APC': 'https://awbw.amarriner.com/terrain/ani/osapc.gif',
+                'Artillery': 'https://awbw.amarriner.com/terrain/ani/osartillery.gif',
+                'Tank': 'https://awbw.amarriner.com/terrain/ani/ostank.gif',
+                'Anti-Air': 'https://awbw.amarriner.com/terrain/ani/osanti-air.gif',
+                'Missile': 'https://awbw.amarriner.com/terrain/ani/osmissile.gif',
+                'Rocket': 'https://awbw.amarriner.com/terrain/ani/osrocket.gif',
+                'Md.Tank': 'https://awbw.amarriner.com/terrain/ani/osmd.tank.gif',
+                'Piperunner': 'https://awbw.amarriner.com/terrain/ani/ospiperunner.gif',
+                'Neotank': 'https://awbw.amarriner.com/terrain/ani/osneotank.gif',
+                'Mega Tank': 'https://awbw.amarriner.com/terrain/ani/osmegatank.gif',
+                'T-Copter': 'https://awbw.amarriner.com/terrain/ani/ost-copter.gif',
+                'B-Copter': 'https://awbw.amarriner.com/terrain/ani/osb-copter.gif',
+                'Fighter': 'https://awbw.amarriner.com/terrain/ani/osfighter.gif',
+                'Bomber': 'https://awbw.amarriner.com/terrain/ani/osbomber.gif',
+                'Black Bomb': 'https://awbw.amarriner.com/terrain/ani/osblackbomb.gif',
+                'Stealth': 'https://awbw.amarriner.com/terrain/ani/osstealth.gif',
+                'Black Boat': 'https://awbw.amarriner.com/terrain/ani/osblackboat.gif',
+                'Lander': 'https://awbw.amarriner.com/terrain/ani/oslander.gif',
+                'Cruiser': 'https://awbw.amarriner.com/terrain/ani/oscruiser.gif',
+                'Sub': 'https://awbw.amarriner.com/terrain/ani/ossub.gif',
+                'Battleship': 'https://awbw.amarriner.com/terrain/ani/osbattleship.gif',
+                'Carrier': 'https://awbw.amarriner.com/terrain/ani/oscarrier.gif',
+                '': 'https://awbw.amarriner.com/terrain/ani/orangestarbase.gif'
+              }[unitName];
+            }
+            function nanTo0(possiblyNanNumber) {
+              return isNaN(possiblyNanNumber) ? 0 : possiblyNanNumber;
             }
 
         </script>
