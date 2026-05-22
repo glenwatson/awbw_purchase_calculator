@@ -116,11 +116,11 @@ function calculatePurchaseOptions(cost_modifier, funds_available, num_factories,
     const possible_factory_purchases = num_factories === 0 ? [] : get_possible_purchases(factory_unit_costs, funds_available, exclude_set, cost_modifier);
     const possible_airport_purchases = num_airports === 0 ? [] : get_possible_purchases(airport_unit_costs, funds_available, exclude_set, cost_modifier);
     const possible_port_purchases = num_ports === 0 ? [] : get_possible_purchases(port_unit_costs, funds_available, exclude_set, cost_modifier);
+    base_case_records.add([funds_available, num_factories, num_airports, num_ports, sorted_units].toString());
     if (possible_factory_purchases.length === 0 &&
         possible_airport_purchases.length === 0 &&
         possible_port_purchases.length === 0) {
         // base case - can't afford anything from and production tiles
-        base_case_records.add([funds_available, num_factories, num_airports, num_ports, sorted_units].toString());
         return;
     }
     // TODO: start with the most expensive purchase
@@ -137,8 +137,7 @@ function calculatePurchaseOptions(cost_modifier, funds_available, num_factories,
                 filters,
                 new_units);
         }
-    }
-    if (num_airports > 0) {
+    } else if (num_airports > 0) {
         for (const airport_purchase_name of possible_airport_purchases) {
             const new_units = units.slice();
             new_units.push(airport_purchase_name);
@@ -151,8 +150,7 @@ function calculatePurchaseOptions(cost_modifier, funds_available, num_factories,
                 filters,
                 new_units);
         }
-    }
-    if (num_ports > 0) {
+    } else if (num_ports > 0) {
         for (const port_purchase_name of possible_port_purchases) {
             const new_units = units.slice();
             new_units.push(port_purchase_name);
